@@ -13,9 +13,17 @@ var numberOfGoodBalls;
 var player = {
   x:10,
   y:10,
-  width:20,
-  height:20,
+  width:50,
+  height:50,
   color:'red'
+}
+
+var bordInterdit = {
+  x:Math.random()<0.5 ? 0 : 400,
+  y:Math.random()<0.5 ? 0 : 400,
+  width:400,
+  height:30,
+  color:'black'
 }
 
 
@@ -43,16 +51,7 @@ window.onload = function init() {
     console.log("hayda houwe l x" + bordInterdit.x);
     console.log("hayda houwe l y" + bordInterdit.y);
 };
-var bordInterdit = {
-    x:Math.random()<0.5 ? 0 : 400,
-    y:Math.random()<0.5 ? 0 : 400,
-    width:400,
-    //x:0,
-    //y:0,
-    //width:500,
-    height:30,
-    color:'black'
-  }
+
 
 function startGame(nb) {
   do {
@@ -125,6 +124,7 @@ function mainLoop() {
   moveAllBalls(balls);
   
   movePlayerWithMouse();
+  
   
   // ask for a new animation frame
   requestAnimationFrame(mainLoop);
@@ -203,56 +203,96 @@ function moveAllBalls(ballArray) {
       // b is the current ball in the array
       b.x += (b.speedX * globalSpeedMutiplier);
       b.y += (b.speedY * globalSpeedMutiplier);
-  
+      testCollisionBallWithBord(b);
       testCollisionBallWithWalls(b); 
     
       testCollisionWithPlayer(b, index);
+      
   });
 }
 
 function testCollisionWithPlayer(b, index) {
-  if(circRectsOverlap(player.x, player.y,
+  if(circRectsOverlap(player.x , player.y,
                      player.width, player.height,
                      b.x, b.y, b.radius)) {
     // we remove the element located at index
     // from the balls array
     // splice: first parameter = starting index
     //         second parameter = number of elements to remove
-    if(b.color === colorToEat) {
+    /* if(b.color === colorToEat) {
       // Yes, we remove it and increment the score
       goodBallsEaten += 1;
     } else {
       wrongBallsEaten += 1;
     }
     
-    balls.splice(index, 1);
+    balls.splice(index, 1); */
+
+    b.speedX = -b.speedX;
+    
+    b.speedY = -b.speedY;
+    
+    
 
   }
 }
 
 
-/* function testCollisionBallWithBord(b) {
+ function testCollisionBallWithBord(b) {
     // COLLISION WITH VERTICAL WALLS ?
-    if((b.x + b.radius) > bordInterdit.width) {
+
+      
+
     // the ball hit the right wall
     // change horizontal direction
-    b.speedX = -b.speedX;
+    //b.speedX = -b.speedX;
     
     // put the ball at the collision point
-    b.x = w - b.radius;
-  } else if((b.x -b.radius) < 0) {
+    //b.x = w - b.radius;
+   /* else if((b.x -b.radius) < 0) {
     // the ball hit the left wall
     // change horizontal direction
-    b.speedX = -b.speedX;
+    b.speedX = -b.speedX;*/
+
+    if (bordInterdit.x == 0 && bordInterdit.y == 0){
+      if ((b.x - b.radius) <= (bordInterdit.x + bordInterdit.height)){
+        ctx.fillText("Game Over khayye!", 20, 30);
+        console.log("hayda b point x " + b.x);
+        console.log("hayda b point radius " + b.radius);
+        console.log("hayda bordInterdit point x " + bordInterdit.x);
+        console.log("hayda bordInterdit point width " + bordInterdit.width);
+        
+        console.log("fet 3al x 0 y 0");
+      }
+    }
+    else if(bordInterdit.x == 400 && bordInterdit.y == 0){
+      if ((b.y - b.radius) < (bordInterdit.y + bordInterdit.height )){
+        ctx.fillText("Game Over khayye!", 20, 30);
+        console.log("fet 3al x 400 y 0");
+      }
+    }
+    if(bordInterdit.x == 0 && bordInterdit.y == 400){
+      if ((b.y + b.radius) > (bordInterdit.y - bordInterdit.height)){
+        ctx.fillText("Game Over khayye!", 20, 30);
+      }
+      
+        
+    }
+
+    else if(bordInterdit.x == 400 && bordInterdit.y == 400){
+      if ((b.x + b.radius) > (bordInterdit.x - bordInterdit.height)){
+        ctx.fillText("Game Over khayye!", 20, 30);
+      }
+        
+    }
     
     // put the ball at the collision point
-    b.x = b.radius;
-  }
+   // b.x = b.radius;
   
-  // COLLISIONS WTH HORIZONTAL WALLS ?
+  /*// COLLISIONS WTH HORIZONTAL WALLS ?
   // Not in the else as the ball can touch both
   // vertical and horizontal walls in corners
-  if((b.y + b.radius) > h) {
+  /* if((b.y + b.radius) > h) {
     // the ball hit the right wall
     // change horizontal direction
     b.speedY = -b.speedY;
@@ -266,8 +306,8 @@ function testCollisionWithPlayer(b, index) {
     
     // put the ball at the collision point
     b.Y = b.radius;
-  }   
-}*/
+  }    */
+}
 function testCollisionBallWithWalls(b) {
     // COLLISION WITH VERTICAL WALLS ?
     if((b.x + b.radius) > w) {
