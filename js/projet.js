@@ -231,6 +231,10 @@ function testCollisionWithPlayer(b, index) {
     b.speedX = -b.speedX;
     
     b.speedY = -b.speedY;
+
+    bordInterdit.x=Math.random()<0.5 ? 0 : 400,
+    bordInterdit.y=Math.random()<0.5 ? 0 : 400,
+    drawFilledBord();
     
     
 
@@ -239,36 +243,17 @@ function testCollisionWithPlayer(b, index) {
 
 
  function testCollisionBallWithBord(b) {
-    // COLLISION WITH VERTICAL WALLS ?
-
-      
-
-    // the ball hit the right wall
-    // change horizontal direction
-    //b.speedX = -b.speedX;
-    
-    // put the ball at the collision point
-    //b.x = w - b.radius;
-   /* else if((b.x -b.radius) < 0) {
-    // the ball hit the left wall
-    // change horizontal direction
-    b.speedX = -b.speedX;*/
-
+  ctx.font="20px Arial";
     if (bordInterdit.x == 0 && bordInterdit.y == 0){
       if ((b.x - b.radius) <= (bordInterdit.x + bordInterdit.height)){
-        ctx.fillText("Game Over khayye!", 20, 30);
-        console.log("hayda b point x " + b.x);
-        console.log("hayda b point radius " + b.radius);
-        console.log("hayda bordInterdit point x " + bordInterdit.x);
-        console.log("hayda bordInterdit point width " + bordInterdit.width);
+        ctx.fillText("Game Over khayye!", 80, 100);
         
-        console.log("fet 3al x 0 y 0");
       }
     }
     else if(bordInterdit.x == 400 && bordInterdit.y == 0){
       if ((b.y - b.radius) < (bordInterdit.y + bordInterdit.height )){
-        ctx.fillText("Game Over khayye!", 20, 30);
-        console.log("fet 3al x 400 y 0");
+        ctx.fillText("Game Over khayye!", 80, 100);
+        
       }
     }
     if(bordInterdit.x == 0 && bordInterdit.y == 400){
@@ -276,7 +261,7 @@ function testCollisionWithPlayer(b, index) {
         ctx.fillText("Game Over khayye!", 20, 30);
       }
       
-        
+
     }
 
     else if(bordInterdit.x == 400 && bordInterdit.y == 400){
@@ -286,27 +271,7 @@ function testCollisionWithPlayer(b, index) {
         
     }
     
-    // put the ball at the collision point
-   // b.x = b.radius;
-  
-  /*// COLLISIONS WTH HORIZONTAL WALLS ?
-  // Not in the else as the ball can touch both
-  // vertical and horizontal walls in corners
-  /* if((b.y + b.radius) > h) {
-    // the ball hit the right wall
-    // change horizontal direction
-    b.speedY = -b.speedY;
-    
-    // put the ball at the collision point
-    b.y = h - b.radius;
-  } else if((b.y -b.radius) < 0) {
-    // the ball hit the left wall
-    // change horizontal direction
-    b.speedY = -b.speedY;
-    
-    // put the ball at the collision point
-    b.Y = b.radius;
-  }    */
+   
 }
 function testCollisionBallWithWalls(b) {
     // COLLISION WITH VERTICAL WALLS ?
