@@ -6,7 +6,7 @@ var mousePos;
 var balls = []; 
 var initialNumberOfBalls;
 var globalSpeedMutiplier = 1;
-var colorToEat = 'red';
+var colorToEat = 'green';
 var wrongBallsEaten = goodBallsEaten = 0;
 var numberOfGoodBalls;
 
@@ -15,15 +15,15 @@ var player = {
   y:10,
   width:50,
   height:50,
-  color:'red'
+  color:'blue'
 }
 
 var bordInterdit = {
-  x:Math.random()<0.5 ? 0 : 400,
-  y:Math.random()<0.5 ? 0 : 400,
-  width:400,
+  x:Math.random()<0.5 ? 0 : 600,
+  y:Math.random()<0.5 ? 0 : 600,
+  width:600,
   height:30,
-  color:'black'
+  color:'red'
 }
 
 
@@ -150,10 +150,10 @@ function createBalls(n) {
      var b = {
         x:w/2,
         y:h/2,
-        radius: 5 + 30 * Math.random(), // between 5 and 35
+        radius: 35, // between 5 and 35
         speedX: -5 + 10 * Math.random(), // between -5 and + 5
         speedY: -5 + 10 * Math.random(), // between -5 and + 5
-        color:getARandomColor(),
+        color:"green",
       }
      // add ball b to the array
      ballArray.push(b);
@@ -162,17 +162,7 @@ function createBalls(n) {
   return ballArray;
 }
 
-function getARandomColor() {
-  var colors = ['red', 'blue', 'cyan', 'purple', 'pink', 'green', 'yellow'];
-  // a value between 0 and color.length-1
-  // Math.round = rounded value
-  // Math.random() a value between 0 and 1
-  var colorIndex = Math.round((colors.length-1)*Math.random()); 
-  var c = colors[colorIndex];
-  
-  // return the random color
-  return c;
-}
+
 
 function drawBallNumbers(balls) {
   ctx.save();
@@ -228,12 +218,15 @@ function testCollisionWithPlayer(b, index) {
     
     balls.splice(index, 1); */
 
-    b.speedX = -b.speedX;
+   // b.speedX = -b.speedX;
     
     b.speedY = -b.speedY;
 
-    bordInterdit.x=Math.random()<0.5 ? 0 : 400,
-    bordInterdit.y=Math.random()<0.5 ? 0 : 400,
+    b.speedX = (b.x - (player.x + player.width/2)) * 0.05;
+
+    bordInterdit.x=Math.random()<0.5 ? 0 : 600;
+    bordInterdit.y=Math.random()<0.5 ? 0 : 600;
+    
     drawFilledBord();
     
     
@@ -250,13 +243,13 @@ function testCollisionWithPlayer(b, index) {
         
       }
     }
-    else if(bordInterdit.x == 400 && bordInterdit.y == 0){
+    else if(bordInterdit.x == 600 && bordInterdit.y == 0){
       if ((b.y - b.radius) < (bordInterdit.y + bordInterdit.height )){
         ctx.fillText("Game Over khayye!", 80, 100);
         
       }
     }
-    if(bordInterdit.x == 0 && bordInterdit.y == 400){
+    if(bordInterdit.x == 0 && bordInterdit.y == 600){
       if ((b.y + b.radius) > (bordInterdit.y - bordInterdit.height)){
         ctx.fillText("Game Over khayye!", 20, 30);
       }
@@ -264,7 +257,7 @@ function testCollisionWithPlayer(b, index) {
 
     }
 
-    else if(bordInterdit.x == 400 && bordInterdit.y == 400){
+    else if(bordInterdit.x == 600 && bordInterdit.y == 600){
       if ((b.x + b.radius) > (bordInterdit.x - bordInterdit.height)){
         ctx.fillText("Game Over khayye!", 20, 30);
       }
@@ -313,6 +306,8 @@ function testCollisionBallWithWalls(b) {
 
 function drawFilledRectangle(r) {
     // GOOD practice: save the context, use 2D trasnformations
+    var img = document.getElementById("image");
+    
     ctx.save();
   
     // translate the coordinate system, draw relative to it
@@ -321,6 +316,7 @@ function drawFilledRectangle(r) {
     ctx.fillStyle = r.color;
     // (0, 0) is the top left corner of the monster.
     ctx.fillRect(0, 0, r.width, r.height);
+    ctx.drawImage(img,0,0, r.width, r.height);  //draw gilet jaune
   
     // GOOD practice: restore the context
     ctx.restore();
@@ -328,6 +324,7 @@ function drawFilledRectangle(r) {
 
 function drawFilledCircle(c) {
     // GOOD practice: save the context, use 2D trasnformations
+    var image = document.getElementById("imagemac");
     ctx.save();
   
     // translate the coordinate system, draw relative to it
@@ -337,15 +334,21 @@ function drawFilledCircle(c) {
     // (0, 0) is the top left corner of the monster.
     ctx.beginPath();
     ctx.arc(0, 0, c.radius, 0, 2*Math.PI);
-    ctx.fill();
- 
+    //ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(image,-35,-35,70,70); //draw macron
     // GOOD practice: restore the context
     ctx.restore();
-}
+
+    }
 
 function drawFilledBord() {
     // GOOD practice: save the context, use 2D trasnformations
+    
     ctx.save();
+    
   
     // translate the coordinate system, draw relative to it
     ctx.translate(bordInterdit.x, bordInterdit.y);
@@ -355,19 +358,20 @@ function drawFilledBord() {
     if (bordInterdit.x == 0 && bordInterdit.y == 0){
         ctx.restore();
         ctx.fillRect(bordInterdit.x, bordInterdit.y, bordInterdit.height,bordInterdit.width);
+        
     }
-    else if(bordInterdit.x == 400 && bordInterdit.y == 0){
+    else if(bordInterdit.x == 600 && bordInterdit.y == 0){
         ctx.restore();
-        ctx.fillRect(bordInterdit.x, bordInterdit.y,-400,30);
+        ctx.fillRect(bordInterdit.x, bordInterdit.y,-600,30);
     }
-    else if(bordInterdit.x == 0 && bordInterdit.y == 400){
+    else if(bordInterdit.x == 0 && bordInterdit.y == 600){
         ctx.restore();
-        ctx.fillRect(bordInterdit.x, bordInterdit.y-30,400,30);
+        ctx.fillRect(bordInterdit.x, bordInterdit.y-30,600,30);
     }
 
-    else if(bordInterdit.x == 400 && bordInterdit.y == 400){
+    else if(bordInterdit.x == 600 && bordInterdit.y == 600){
         ctx.restore();
-        ctx.fillRect(bordInterdit.x-30, bordInterdit.y,30,-400);
+        ctx.fillRect(bordInterdit.x-30, bordInterdit.y,30,-600);
     }
     
   
