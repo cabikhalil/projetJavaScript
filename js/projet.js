@@ -7,7 +7,6 @@ var balls = [];
 var initialNumberOfBalls;
 var globalSpeedMutiplier = 1;
 var colorToEat = 'green';
-var wrongBallsEaten = goodBallsEaten = 0;
 var numberOfGoodBalls;
 
 var player = {
@@ -40,7 +39,7 @@ window.onload = function init() {
     ctx = canvas.getContext('2d');
   
     // start game with 10 balls, balls to eat = red balls
-    startGame(1);
+    //startGame(1);
   
     // add a mousemove event listener to the canvas
     canvas.addEventListener('mousemove', mouseMoved);
@@ -48,9 +47,15 @@ window.onload = function init() {
     // ready to go !
     mainLoop();
 
-    console.log("hayda houwe l x" + bordInterdit.x);
-    console.log("hayda houwe l y" + bordInterdit.y);
 };
+
+window.onclick = processClick;
+
+function processClick(evt) {
+ startGame(1);
+  
+  evt.stopPropagation(); // try commenting it and click on the button or div
+}
 
 
 function startGame(nb) {
@@ -118,7 +123,7 @@ function mainLoop() {
   drawFilledRectangle(player);
   drawFilledBord();
   drawAllBalls(balls);
-  drawBallNumbers(balls);
+  //drawBallNumbers(balls);
 
   // animate the ball that is bouncing all over the walls
   moveAllBalls(balls);
@@ -164,12 +169,12 @@ function createBalls(n) {
 
 
 
-function drawBallNumbers(balls) {
+/* function drawBallNumbers(balls) {
   ctx.save();
   ctx.font="20px Arial";
   
   if(balls.length === 0) {
-    ctx.fillText("Game Over!", 20, 30);
+   // ctx.fillText("Game Over!", 20, 30);
   } else if(goodBallsEaten === numberOfGoodBalls) {
     ctx.fillText("You Win! Final score : " + (initialNumberOfBalls - wrongBallsEaten), 
                  20, 30);
@@ -179,7 +184,7 @@ function drawBallNumbers(balls) {
      ctx.fillText("Wrong Balls eaten: " + wrongBallsEaten, 210, 70);
   }
   ctx.restore();
-}
+} */
 
 function drawAllBalls(ballArray) {
     ballArray.forEach(function(b) {
@@ -239,19 +244,19 @@ function testCollisionWithPlayer(b, index) {
   ctx.font="20px Arial";
     if (bordInterdit.x == 0 && bordInterdit.y == 0){
       if ((b.x - b.radius) <= (bordInterdit.x + bordInterdit.height)){
-        ctx.fillText("Game Over khayye!", 80, 100);
+        ctx.fillText("Macron a piqué l'argent!", 80, 100);
         
       }
     }
     else if(bordInterdit.x == 600 && bordInterdit.y == 0){
       if ((b.y - b.radius) < (bordInterdit.y + bordInterdit.height )){
-        ctx.fillText("Game Over khayye!", 80, 100);
+        ctx.fillText("Macron a piqué l'argent!", 80, 100);
         
       }
     }
     if(bordInterdit.x == 0 && bordInterdit.y == 600){
       if ((b.y + b.radius) > (bordInterdit.y - bordInterdit.height)){
-        ctx.fillText("Game Over khayye!", 20, 30);
+        ctx.fillText("Macron a piqué l'argent!", 20, 30);
       }
       
 
@@ -259,7 +264,7 @@ function testCollisionWithPlayer(b, index) {
 
     else if(bordInterdit.x == 600 && bordInterdit.y == 600){
       if ((b.x + b.radius) > (bordInterdit.x - bordInterdit.height)){
-        ctx.fillText("Game Over khayye!", 20, 30);
+        ctx.fillText("Macron a piqué l'argent!", 20, 30);
       }
         
     }
@@ -346,6 +351,8 @@ function drawFilledCircle(c) {
 
 function drawFilledBord() {
     // GOOD practice: save the context, use 2D trasnformations
+    var img = document.getElementById("imagemoney");
+    var img1 = document.getElementById("imagemoney1");
     
     ctx.save();
     
@@ -353,25 +360,30 @@ function drawFilledBord() {
     // translate the coordinate system, draw relative to it
     ctx.translate(bordInterdit.x, bordInterdit.y);
   
-    ctx.fillStyle = bordInterdit.color;
+    ctx.fillStyle = "white";
     // (0, 0) is the top left corner of the monster.
     if (bordInterdit.x == 0 && bordInterdit.y == 0){
         ctx.restore();
         ctx.fillRect(bordInterdit.x, bordInterdit.y, bordInterdit.height,bordInterdit.width);
+        ctx.drawImage(img1,bordInterdit.x, bordInterdit.y, bordInterdit.height,bordInterdit.width);
+        
         
     }
     else if(bordInterdit.x == 600 && bordInterdit.y == 0){
         ctx.restore();
         ctx.fillRect(bordInterdit.x, bordInterdit.y,-600,30);
+        ctx.drawImage(img,bordInterdit.x, bordInterdit.y,-600,30);
     }
     else if(bordInterdit.x == 0 && bordInterdit.y == 600){
         ctx.restore();
         ctx.fillRect(bordInterdit.x, bordInterdit.y-30,600,30);
+        ctx.drawImage(img,bordInterdit.x, bordInterdit.y-30,600,30);
     }
 
     else if(bordInterdit.x == 600 && bordInterdit.y == 600){
         ctx.restore();
         ctx.fillRect(bordInterdit.x-30, bordInterdit.y,30,-600);
+        ctx.drawImage(img1,bordInterdit.x-30, bordInterdit.y,30,-600);
     }
     
   
