@@ -4,10 +4,8 @@ var mousePos;
 
 // an empty array!
 var balls = []; 
-var initialNumberOfBalls;
 var globalSpeedMutiplier = 1;
-var colorToEat = 'green';
-var numberOfGoodBalls;
+var perdu = false;
 
 var player = {
   x:10,
@@ -59,37 +57,21 @@ function processClick(evt) {
 
 
 function startGame(nb) {
-  do {
+  finished = false;
+  clearInterval(counter);
+  count = 30;
+  
     balls = createBalls(nb);
-    initialNumberOfBalls = nb;
-    numberOfGoodBalls = countNumberOfGoodBalls(balls, colorToEat);
-  } while(numberOfGoodBalls === 0);
+    
+    
   
-  wrongBallsEaten = goodBallsEaten = 0;
+  // timer interval is every second (1000ms)
+  setInterval(counter, 1000);
+
 }
 
-function countNumberOfGoodBalls(balls, colorToEat) {
-  var nb = 0;
-  
-  balls.forEach(function(b) {
-    if(b.color === colorToEat)
-      nb++;
-  });
-  
-  return nb;
-}
 
-/* function changeNbBalls(nb) {
-  startGame(nb);
-} */
-
-/* function changeColorToEat(color) {
-  colorToEat = color;
-}
-
-function changePlayerColor(color) {
-  player.color = color;
-} */
+ 
 
 function changeBallSpeed(coef) {
     globalSpeedMutiplier = coef;
@@ -114,6 +96,27 @@ function movePlayerWithMouse() {
     player.y = mousePos.y;
   }
 }
+// how many seconds the game lasts for - default 30
+var count = 30;
+var finished = false;
+var counter =function(){
+ count=count-1; // countown by 1 every second
+ 
+ // when count reaches 0 clear the timer and finish the game
+   if (count <= 0)
+   {
+     // stop the timer
+      clearInterval(counter);
+      // set game to finished
+      finished = true;
+      perdu = false;
+      count=0;
+      
+   }
+
+   
+}
+
 
 function mainLoop() {
   // 1 - clear the canvas
@@ -129,7 +132,6 @@ function mainLoop() {
   moveAllBalls(balls);
   
   movePlayerWithMouse();
-  
   
   // ask for a new animation frame
   requestAnimationFrame(mainLoop);
@@ -168,28 +170,34 @@ function createBalls(n) {
 }
 
 
-
-/* function drawBallNumbers(balls) {
-  ctx.save();
-  ctx.font="20px Arial";
-  
-  if(balls.length === 0) {
-   // ctx.fillText("Game Over!", 20, 30);
-  } else if(goodBallsEaten === numberOfGoodBalls) {
-    ctx.fillText("You Win! Final score : " + (initialNumberOfBalls - wrongBallsEaten), 
-                 20, 30);
-  } else {
-    ctx.fillText("Balls still alive: " + balls.length, 210, 30);
-    ctx.fillText("Good Balls eaten: " + goodBallsEaten, 210, 50);
-     ctx.fillText("Wrong Balls eaten: " + wrongBallsEaten, 210, 70);
-  }
-  ctx.restore();
-} */
-
 function drawAllBalls(ballArray) {
     ballArray.forEach(function(b) {
       drawFilledCircle(b);
     });
+
+// Display time 
+ ctx.fillStyle = "rgb(200, 200, 200)";
+ ctx.font = "24px Helvetica";
+ ctx.textAlign = "left";
+ ctx.textBaseline = "top";
+ ctx.fillText("Time: " + count, 50, 50);
+ // Display game over message when timer finished
+ if(finished==true && perdu == false){
+   ctx.fillText("Bravo !!!", 220, 250);
+   ctx.fillText("Vous avez empecher Macron de piquer votre argent !", 30, 280);
+   ballArray.forEach(function(b) {
+    b.speedX = 0;
+    b.speedY =0;
+  });
+  if(finished==true && perdu == true){
+    ctx.fillText("Game over!", 200, 220);
+    ballArray.forEach(function(b) {
+     b.speedX = 0;
+     b.speedY =0;
+   });
+   
+ }
+}
 }
 
 function moveAllBalls(ballArray) {
@@ -207,23 +215,10 @@ function moveAllBalls(ballArray) {
 }
 
 function testCollisionWithPlayer(b, index) {
+  if (finished == false){
   if(circRectsOverlap(player.x , player.y,
                      player.width, player.height,
                      b.x, b.y, b.radius)) {
-    // we remove the element located at index
-    // from the balls array
-    // splice: first parameter = starting index
-    //         second parameter = number of elements to remove
-    /* if(b.color === colorToEat) {
-      // Yes, we remove it and increment the score
-      goodBallsEaten += 1;
-    } else {
-      wrongBallsEaten += 1;
-    }
-    
-    balls.splice(index, 1); */
-
-   // b.speedX = -b.speedX;
     
     b.speedY = -b.speedY;
 
@@ -234,7 +229,7 @@ function testCollisionWithPlayer(b, index) {
     
     drawFilledBord();
     
-    
+                     }
 
   }
 }
@@ -244,19 +239,34 @@ function testCollisionWithPlayer(b, index) {
   ctx.font="20px Arial";
     if (bordInterdit.x == 0 && bordInterdit.y == 0){
       if ((b.x - b.radius) <= (bordInterdit.x + bordInterdit.height)){
-        ctx.fillText("Macron a piqué l'argent!", 80, 100);
+        perdu = true;
+        ctx.fillText("Macron a piqué l'argent!", 200, 250);
+        finished = true;
+        b.speedX = 0;
+        b.speedY = 0;
+        clearInterval(counter);
         
       }
     }
     else if(bordInterdit.x == 600 && bordInterdit.y == 0){
       if ((b.y - b.radius) < (bordInterdit.y + bordInterdit.height )){
-        ctx.fillText("Macron a piqué l'argent!", 80, 100);
+        perdu = true;
+        ctx.fillText("Macron a piqué l'argent!", 200, 250);
+        finished = true;
+        b.speedX = 0;
+        b.speedY = 0;
+        clearInterval(counter);
         
       }
     }
     if(bordInterdit.x == 0 && bordInterdit.y == 600){
       if ((b.y + b.radius) > (bordInterdit.y - bordInterdit.height)){
-        ctx.fillText("Macron a piqué l'argent!", 20, 30);
+        perdu = true;
+        ctx.fillText("Macron a piqué l'argent!", 200, 250);
+        finished = true;
+        b.speedX = 0;
+        b.speedY = 0;
+        clearInterval(counter);
       }
       
 
@@ -264,7 +274,12 @@ function testCollisionWithPlayer(b, index) {
 
     else if(bordInterdit.x == 600 && bordInterdit.y == 600){
       if ((b.x + b.radius) > (bordInterdit.x - bordInterdit.height)){
-        ctx.fillText("Macron a piqué l'argent!", 20, 30);
+        perdu = true;
+        ctx.fillText("Macron a piqué l'argent!", 200, 250);
+        finished = true;
+        b.speedX = 0;
+        b.speedY = 0;
+        clearInterval(counter);
       }
         
     }
